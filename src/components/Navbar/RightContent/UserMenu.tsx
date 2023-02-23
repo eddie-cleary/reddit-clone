@@ -2,7 +2,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Menu,
   MenuButton,
-  Button,
+  Text,
   MenuList,
   MenuItem,
   Icon,
@@ -33,7 +33,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
         cursor="pointer"
         padding="0px 6px"
         borderRadius={4}
-        _hover={{ outline: "1px solid gray.200" }}
+        _hover={{ outline: "1px solid", outlineColor: "gray.200" }}
       >
         <Flex align="center">
           <Flex align="center">
@@ -45,6 +45,21 @@ const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
                   mr={1}
                   color="gray.300"
                 />
+                <Flex
+                  direction="column"
+                  display={{ base: "none", lg: "flex" }}
+                  fontSize="8pt"
+                  align="flex-start"
+                  mr={8}
+                >
+                  <Text fontWeight={700}>
+                    {user?.displayName || user.email?.split("@")[0]}
+                  </Text>
+                  <Flex>
+                    <Icon as={IoSparkles} color="brand.100" mr={1} />
+                    <Text color="gray.400">1 karma</Text>
+                  </Flex>
+                </Flex>
               </>
             ) : (
               <Icon as={VscAccount} fontSize={24} color="gray.400" mr={1} />
