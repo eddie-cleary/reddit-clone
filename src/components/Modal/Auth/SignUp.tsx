@@ -1,7 +1,9 @@
 import { authModalState } from "@/atoms/authModalAtom";
+import { auth } from "@/firebase/clientApp";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useSetRecoilState } from "recoil";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 
 const SignUp: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
@@ -10,8 +12,21 @@ const SignUp: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+  const [error, setError] = useState("");
+  const [createUserWithEmailAndPassword, user, loading, userError] =
+    useCreateUserWithEmailAndPassword(auth);
 
-  const onSubmit = () => {};
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (error) setError("");
+
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    createUserWithEmailAndPassword(signUpForm.email, signUpForm.password);
+  };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSignUpForm((prev) => ({
@@ -43,9 +58,7 @@ const SignUp: React.FC = () => {
           border: "1px solid",
           borderColor: "blue.500",
         }}
-        onChange={() => {
-          onChange;
-        }}
+        onChange={onChange}
         bg="gray.50"
       />
       <Input
@@ -69,9 +82,7 @@ const SignUp: React.FC = () => {
           border: "1px solid",
           borderColor: "blue.500",
         }}
-        onChange={() => {
-          onChange;
-        }}
+        onChange={onChange}
         bg="gray.50"
       />
       <Input
@@ -95,12 +106,21 @@ const SignUp: React.FC = () => {
           border: "1px solid",
           borderColor: "blue.500",
         }}
-        onChange={() => {
-          onChange;
-        }}
+        onChange={onChange}
         bg="gray.50"
       />
-      <Button width="100%" height="36px" my={2} type="submit">
+      {error && (
+        <Text textAlign="center" color="red" fontSize="10pt">
+          {error}
+        </Text>
+      )}
+      <Button
+        width="100%"
+        height="36px"
+        my={2}
+        type="submit"
+        isLoading={loading}
+      >
         Sign Up
       </Button>
       <Flex fontSize="9pt" justifyContent="center">
