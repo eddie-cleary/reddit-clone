@@ -3,5 +3,5 @@ export const FIREBASE_ERRORS = {
     "A user with that email already exists.",
   "Firebase: Error (auth/user-not-found).": "Invalid email or password",
   "Firebase: Error (auth/wrong-password).": "Invalid email or password",
-  "Firebase: Error (auth/invalid-email).": "Email is not valid",
+  "Firebase: Error (auth/invalid-email).": "Invalid email or password",
 };
