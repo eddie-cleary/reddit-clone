@@ -18,7 +18,7 @@ const TextInputs: React.FC<TextInputsProps> = (props) => {
     <Stack spacing={3} width="100%">
       <Input
         name="title"
-        // value={}
+        value={props.textInputs.title}
         onChange={props.onChange}
         fontSize="10pt"
         borderRadius={4}
