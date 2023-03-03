@@ -1,4 +1,12 @@
-import { Flex, Icon } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Flex,
+  Icon,
+  Text,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
@@ -7,8 +15,22 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import TabItem from "./TabItem";
 import TextInputs from "./PostForm/TextInputs";
 import ImageUpload from "./PostForm/ImageUpload";
+import { Post } from "@/atoms/postsAtom";
+import { User } from "firebase/auth";
+import { useRouter } from "next/router";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { firestore, storage } from "@/firebase/clientApp";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
-type NewPostFormProps = {};
+type NewPostFormProps = {
+  user: User;
+};
 
 const formTabs: TabItemType[] = [
   {
@@ -38,13 +60,55 @@ export type TabItemType = {
   icon: typeof Icon.arguments;
 };
 
-const NewPostForm: React.FC<NewPostFormProps> = () => {
+const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [textInputs, setTextInputs] = useState({ title: "", body: "" });
   const [selectedFile, setSelectedFile] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleCreatePost = async () => {};
+  const handleCreatePost = async () => {
+    const { communityId } = router.query;
+
+    // construct a new post object of type Post
+    const newPost: Post = {
+      id: "",
+      communityId: communityId as string,
+      creatorId: user?.uid,
+      creatorDisplayName: user.email!.split("@")[0],
+      title: textInputs.title,
+      body: textInputs.body,
+      numberOfComments: 0,
+      voteStatus: 0,
+      createdAt: serverTimestamp() as Timestamp,
+    };
+
+    try {
+      setLoading(true);
+      // store the post in our db collection 'posts'
+      const postDocRef = await addDoc(collection(firestore, "posts"), newPost);
+
+      // if the user included an image, store it in firebase storage
+      if (selectedFile) {
+        const imageRef = ref(storage, `posts/${postDocRef.id}/image`);
+        await uploadString(imageRef, selectedFile, "data_url");
+        const downloadURL = await getDownloadURL(imageRef);
+        // update post doc with image url
+        await updateDoc(postDocRef, {
+          imageURL: downloadURL,
+        });
+      }
+    } catch (error: any) {
+      console.error(error.message);
+      setError(true);
+    } finally {
+      setLoading(false);
+
+      // redirect user to community page
+      // router.back();
+    }
+  };
 
   const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -99,6 +163,12 @@ const NewPostForm: React.FC<NewPostFormProps> = () => {
           />
         )}
       </Flex>
+      {error && (
+        <Alert status="error">
+          <AlertIcon />
+          <Text mr={2}>Error creating post</Text>
+        </Alert>
+      )}
     </Flex>
   );
 };
