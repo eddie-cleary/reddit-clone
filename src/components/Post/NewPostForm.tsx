@@ -94,9 +94,10 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ user }) => {
         await updateDoc(postDocRef, {
           imageURL: downloadURL,
         });
-        // redirect user to community page
-        router.back();
       }
+
+      // redirect user to community page
+      router.back();
     } catch (error: any) {
       console.error(error.message);
       setError(true);
