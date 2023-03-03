@@ -1,5 +1,5 @@
 import PageContent from "@/components/Layout/PageContent";
-import NewPostForm from "@/components/Posts/NewPostForm";
+import NewPostForm from "@/components/Post/NewPostForm";
 import { Box, Text } from "@chakra-ui/react";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -14,7 +14,7 @@ const SubmitPostPage: React.FC = () => {
         <Box py="14px" borderBottom="1px solid white">
           <Text>Create a post</Text>
         </Box>
-        {user && <NewPostForm user={user} />} 
+        {user && <NewPostForm user={user} />}
       </>
       <>{/* AboutComponent */}</>
     </PageContent>
