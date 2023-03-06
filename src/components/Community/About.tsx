@@ -83,8 +83,9 @@ const About: React.FC<AboutProps> = (props) => {
           <Flex width="100%" p={2} fontSize="10pt" fontWeight={700}>
             <Flex direction="column" flexGrow={1}>
               <Text>
-                {props.communityData.numberOfMembers.toLocaleString()} Members
+                {props.communityData.numberOfMembers.toLocaleString()}
               </Text>
+              <Text>Members</Text>
             </Flex>
             <Flex direction="column" flexGrow={1}>
               <Text>1</Text>
@@ -110,7 +111,7 @@ const About: React.FC<AboutProps> = (props) => {
             )}
           </Flex>
           <Link href={`/r/${props.communityData.id}/submit`}>
-            <Button mt={3} height="30px">
+            <Button mt={3} height="30px" width="100%">
               Create Post
             </Button>
           </Link>
