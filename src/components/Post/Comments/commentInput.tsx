@@ -3,7 +3,7 @@ import { Flex, Textarea, Button, Text } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import React from "react";
 
-type commentInputProps = {
+type CommentInputProps = {
   commentText: string;
   setCommentText: (value: string) => void;
   user: User;
@@ -11,7 +11,7 @@ type commentInputProps = {
   onCreateComment: (commentText: string) => void;
 };
 
-const CommentInput: React.FC<commentInputProps> = (props) => {
+const CommentInput: React.FC<CommentInputProps> = (props) => {
   return (
     <Flex direction="column" position="relative">
       {props.user ? (
