@@ -7,6 +7,9 @@ import { auth, firestore } from "@/firebase/clientApp";
 import { useRouter } from "next/router";
 import { doc, getDoc } from "firebase/firestore";
 import { Post } from "@/atoms/postsAtom";
+import Comments from "@/components/Post/Comments/Comments";
+import { postState } from "../../../../atoms/postsAtom";
+import { User } from "firebase/auth";
 
 const PostPage: React.FC = () => {
   const { postStateValue, setPostStateValue, onDeletePost, onVote } =
@@ -55,7 +58,11 @@ const PostPage: React.FC = () => {
           />
         )}
         {/* <SelectedPost /> */}
-        {/* <Comments /> */}
+        <Comments
+          user={user as User}
+          selectedPost={postStateValue.selectedPost}
+          communityId={postStateValue.selectedPost?.communityId as string}
+        />
       </>
       <>{/* <About /> */}</>
     </PageContent>
