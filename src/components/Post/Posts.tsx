@@ -54,7 +54,7 @@ const Posts: React.FC<PostsProps> = (props) => {
 
   useEffect(() => {
     getPosts();
-  }, [getPosts]);
+  }, [getPosts, props.communityData]);
 
   return (
     <>
