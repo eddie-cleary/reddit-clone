@@ -38,6 +38,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [createLoading, setCreateLoading] = useState(false);
   const setPostState = useSetRecoilState(postState);
+  const [loadingDeleteId, setLoadingDeleteId] = useState("");
 
   const onCreateComment = async () => {
     try {
@@ -84,10 +85,38 @@ const Comments: React.FC<CommentsProps> = (props) => {
     }
   };
 
-  const onDeleteComment = async (comment: any) => {
-    // delete comment doc in db
-    // update post number of comments
-    // update client recoil state
+  const onDeleteComment = async (comment: Comment) => {
+    try {
+      setLoadingDeleteId(comment.id);
+      const batch = writeBatch(firestore);
+
+      // delete comment doc in db
+      const commentDocRef = doc(firestore, "comments", comment.id);
+      batch.delete(commentDocRef);
+
+      // update post number of comments
+      const postDocRef = doc(firestore, "posts", props.selectedPost?.id!);
+      batch.update(postDocRef, {
+        numberOfComments: increment(-1),
+      });
+
+      await batch.commit();
+
+      // update client recoil state
+      setPostState((prev) => ({
+        ...prev,
+        selectedPost: {
+          ...prev.selectedPost,
+          numberOfComments: prev.selectedPost?.numberOfComments! - 1,
+        } as Post,
+      }));
+
+      setComments((prev) => prev.filter((item) => item.id !== comment.id));
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setLoadingDeleteId("");
+    }
   };
 
   const getPostComments = useCallback(async () => {
@@ -168,7 +197,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
                     key={comment.id}
                     comment={comment}
                     onDelete={onDeleteComment}
-                    loadingDelete={false}
+                    loadingDelete={loadingDeleteId === comment.id}
                     userId={props.user.uid}
                   />
                 ))}
