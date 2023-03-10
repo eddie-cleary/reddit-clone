@@ -69,9 +69,8 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = (props) => {
     setLoading(true);
 
     try {
-      const communityDocRef = doc(firestore, "communities", communityName);
-
       await runTransaction(firestore, async (transaction) => {
+        const communityDocRef = doc(firestore, "communities", communityName);
         const communityDoc = await transaction.get(communityDocRef);
 
         // Check if community exists
