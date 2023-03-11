@@ -24,6 +24,7 @@ import {
 } from "react-icons/io5";
 import moment from "moment";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 type PostItemProps = {
   post: Post;
@@ -37,6 +38,7 @@ type PostItemProps = {
   ) => void;
   onDeletePost: (post: Post) => Promise<boolean>;
   onSelectPost?: (post: Post) => void;
+  homePage?: boolean;
 };
 
 const PostItem: React.FC<PostItemProps> = (props) => {
@@ -124,7 +126,31 @@ const PostItem: React.FC<PostItemProps> = (props) => {
         )}
         <Stack spacing={1} p="10px">
           <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
-            {/* Home Page Check */}
+            {props.homePage && (
+              <>
+                {props.post.communityImageURL ? (
+                  <Image
+                    src={props.post.communityImageURL}
+                    borderRadius="full"
+                    boxSize="18px"
+                    mr={2}
+                    alt={props.post.communityId}
+                  />
+                ) : (
+                  <Icon as={FaReddit} fontSize="18pt" mr={1} color="blue.500" />
+                )}
+                <Link
+                  onClick={(event) => event.stopPropagation()}
+                  href={`r/${props.post.communityId}`}
+                >
+                  <Text
+                    fontWeight={700}
+                    _hover={{ textDecoration: "underline" }}
+                  >{`r/${props.post.communityId}`}</Text>
+                </Link>
+                <Icon as={BsDot} color="gray.500" fontSize={8} />
+              </>
+            )}
             <Text>
               Posted by u/{props.post.creatorDisplayName}
               {moment(new Date(props.post.createdAt?.seconds * 1000)).fromNow()}
