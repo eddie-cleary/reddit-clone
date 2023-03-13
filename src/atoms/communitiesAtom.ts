@@ -13,7 +13,6 @@ export interface Community {
 export interface CommunitySnippet {
   communityId: string;
   isModerator?: boolean;
-  // Todo: remove optional on imageURL once implemented
   imageURL?: string;
 }
 
